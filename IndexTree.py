@@ -8,6 +8,27 @@ from sklearn.cluster import MiniBatchKMeans, KMeans
 import sys
 
 
+def BuildIndex(X, arity, numberofLevel,onRecordTrue):
+
+    indexMap = {}
+    index = 0
+    for e in X:
+        indexMap[tuple(e)] = index
+        index = index + 1
+
+    cluster = Clustering(X, arity, numberofLevel)
+    cluster.buildTree(cluster.root)
+    cluster.createLevelMatrix(cluster.root)
+    if onRecordTrue:
+        cluster.createDistanceMatrixforelements(arity, numberofLevel)
+    else:
+        cluster.createDistanceMatrix(arity,numberofLevel)
+
+    # iTree.cleanUp(iTree.root)
+    # print(get_object_size(iTree))
+    return cluster,indexMap
+
+
 class Clustering:
     documentMap = {}
 

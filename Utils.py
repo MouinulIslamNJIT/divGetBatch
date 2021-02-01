@@ -1,6 +1,13 @@
 import guppy
 import inspect
 from pyclustering.utils import euclidean_distance_square
+import pandas as pd
+from sklearn.preprocessing import normalize
+from sklearn.datasets.samples_generator import make_blobs
+
+
+infinity = float("inf")
+
 def get_object_size(obj):
     h = guppy.hpy()
     callers_local_vars = inspect.currentframe().f_back.f_locals.items()
@@ -62,3 +69,53 @@ def InitialTwoRecordsInGMM(cluster):
 
 def similarity(r1,r2):
     return 1/(1+euclidean_distance_square(r1, r2))
+
+
+
+def createDisMatrix(X):
+    d = []
+    i = 0
+    for p1 in X:
+        dd = []
+        for p2 in X:
+            dist = (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2
+            dd.append(dist)
+        d.append(dd)
+    return d
+
+def createSimMatrix(q, X):
+    r = {}
+    i = 0
+    for p in X:
+        d = euclidean_distance_square(q,p)
+        r[i] = 1/(1+d)
+        i = i + 1
+    return r
+
+def topkitems(sortedrecitems, k):
+    return sortedrecitems[0:k]
+
+
+
+def yelp_data(numberofSample):
+    print("running yelp")
+    dataset=pd.read_csv('business.csv' , nrows=numberofSample)
+    D = dataset.iloc[:, [6,7,8]].values
+    normalized_D = normalize(D, axis=0, norm='l2')*1000
+    X = normalized_D
+
+    return X
+
+def movieLens_data(numberofSample):
+    print("running movieLens")
+    dataset=pd.read_csv('ratings.csv' , nrows=numberofSample)
+    D = dataset.iloc[:, [2, 3]].values
+    normalized_D = normalize(D, axis=0, norm='l2')*1000000
+    X = normalized_D
+
+    return X
+
+def makeBlobs_data(numberofSample):
+    print("running makeBlobs")
+    X, Y = make_blobs(n_samples=numberofSample, centers=10, cluster_std=0.010, random_state=0)
+    return X

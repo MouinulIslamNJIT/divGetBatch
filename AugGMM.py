@@ -1,19 +1,4 @@
-from pyclustering.utils import euclidean_distance_square
-from clustering_final import Clustering
-
-#from normalization import normalized_X
-from sklearn.datasets.samples_generator import make_blobs
-import numpy as np
-import timeit
-from Node import Node
-import pandas as pd
-from sklearn.preprocessing import normalize
-
-from GMM import GMM
-from Utils import checkResult,InitialTwoRecordsInGMM,div
-
-
-
+from Utils import div
 
 def CalculateBound(iTree,level,arity,S,minMap,indexMap,candNodes):
     lastItem = S[-1]
@@ -23,13 +8,13 @@ def CalculateBound(iTree,level,arity,S,minMap,indexMap,candNodes):
     for nodeId in range(1,arity**level+1):
         node = iTree.levelMatrix[level][nodeId]
 
-        ##########cluster to iTree distance##########
-        # id = iTree.documentMap[tuple(lastItem)][level]
-        # distmin, distmax = iTree.dismatrix[level][recordId][node.id]
+        #########cluster to iTree distance##########
+        nid = iTree.documentMap[tuple(lastItem)][level]
+        distmin, distmax = iTree.dismatrix[level][nid][node.id]
 
-        ######### item to iTree distance ############
-        recordId = indexMap[tuple(lastItem)]
-        distmin, distmax = iTree.dismatrixitem[level][recordId][node.id]
+        # ######### item to iTree distance ############
+        # recordId = indexMap[tuple(lastItem)]
+        # distmin, distmax = iTree.dismatrixitem[level][recordId][node.id]
 
         minmax = minMap[(node.id,level)][0]
         minmin = minMap[(node.id,level)][1]
