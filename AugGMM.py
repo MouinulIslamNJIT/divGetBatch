@@ -1,90 +1,116 @@
-
 from pyclustering.utils import euclidean_distance_square
 from clustering_final import Clustering
-from distance import min_distance, max_distance
+
 #from normalization import normalized_X
 from sklearn.datasets.samples_generator import make_blobs
 import numpy as np
 import timeit
 from Node import Node
 import pandas as pd
-#from sklearn.preprocessing import normalize
-
-
-# numberOfCluster = 40
-# numberOfLevels = 1
-
+from sklearn.preprocessing import normalize
 
 from GMM import GMM
-from Utils import checkResult
+from Utils import checkResult,InitialTwoRecordsInGMM,div
 
 
-def InitialTwoRecords(cluster):
-    maxdis = 0
-    selectedNode1 = None
-    selectedNode2 = None
-
-    for node1 in cluster.root.children:
-        for node2 in cluster.root.children:
-            distmin , distmax = cluster.dismatrix[1][node1.id][node2.id]
-            if maxdis < distmax:
-                maxdis = distmax
-                selectedNode1 = node1
-                selectedNode2 = node2
-    candR = selectedNode1.elements + selectedNode2.elements
-
-    maxdis = 0
-
-    for i in candR:
-        for j in candR:
-            if i != j:
-                dis = euclidean_distance_square(i, j)
-                if maxdis < dis:
-                    maxdis = dis
-                    record1 = i
-                    record2 = j
-
-    selectedNode1.elements.remove(record1)
-    selectedNode2.elements.remove(record2)
-
-    return  (record1,record2)
 
 
-def AugGMM(cluster, X, K, indexMap, record1,record2):
-    l = 1
+def CalculateBound(iTree,level,arity,S,minMap,indexMap,candNodes):
+    lastItem = S[-1]
+    lBGMM = []
+    uBGMM = []
+
+    for nodeId in range(1,arity**level+1):
+        node = iTree.levelMatrix[level][nodeId]
+
+        ##########cluster to iTree distance##########
+        # id = iTree.documentMap[tuple(lastItem)][level]
+        # distmin, distmax = iTree.dismatrix[level][recordId][node.id]
+
+        ######### item to iTree distance ############
+        recordId = indexMap[tuple(lastItem)]
+        distmin, distmax = iTree.dismatrixitem[level][recordId][node.id]
+
+        minmax = minMap[(node.id,level)][0]
+        minmin = minMap[(node.id,level)][1]
+        if minmax > distmax:
+            minmax = distmax
+
+        if minmin > distmin:
+            minmin = distmin
+
+        minMap[(node.id,level)] = (minmax, minmin)
+        if node in candNodes:
+            lBGMM.append(minmin)
+            uBGMM.append(minmax)
+    return  (lBGMM,uBGMM)
+
+
+
+def skipNodes(lBGMM,uBGMM,candNodes):
+    maxofMin = max(lBGMM)
+    remainCluster = []
+    i = 0
+
+    for it in uBGMM:
+        if it >= maxofMin:
+            if len(candNodes[i].children) == 0:
+                remainCluster.append(candNodes[i])
+            else:
+                remainCluster.extend(candNodes[i].children)
+        i = i + 1
+    candNodes = remainCluster
+    return candNodes
+
+
+def DivGetBatch(iTree, L,arity,S, minMap, indexMap):
+    candNodes = iTree.root.children
+    lastItem = S[-1]
+    for level in range(1,L+1):
+        lBGMM,uBGMM = CalculateBound(iTree,level,arity,S,minMap,indexMap,candNodes) #calculateBound(iTree,C,indexMap,iTreeArray,l)
+        candNodes = skipNodes(lBGMM,uBGMM,candNodes)
+    candR = []
+    for node in candNodes:
+        candR.extend(node.elements)
+    #print("number of returned items by DivGetBatch: ", len(candR))
+    return candR
+
+
+def AugGMM(iTree,L,arity, R, K, indexMap ,initRecords):
+
     S = []
-    S.append(record1)
-    S.append(record2)
-    X.remove(record1)
-    X.remove(record2)
+    S.extend(list(initRecords))
+    R.remove(initRecords[0])
+    R.remove(initRecords[1])
 
 
     minMap = {}
-    for node1 in cluster.root.children:
 
-        ##########item to cluster distance##########
+    for level in range(1, L+1):
+        for nodeId in range(1,arity**level+1):
+            node = iTree.levelMatrix[level][nodeId]
+            ##########record to node distance##########
 
-        id = indexMap[tuple(record1)]
-        distmin, distmax = cluster.dismatrixitem[l][id][node1.id]
-        minMap[node1.id] = (distmax, distmin)
+            # recordId = indexMap[tuple(initRecords[0])]
+            # distmin, distmax = iTree.dismatrixitem[level][recordId][node.id]
+            # minMap[(node.id, level)] = (distmax, distmin)
 
-        ##########cluster to cluster distance##########
+            ##########node to node distance##########
 
-        # id = cluster.documentMap[tuple(a)][l]
-        # distmin, distmax = cluster.dismatrix[l][id][node1.id]
-        # minMap[node1.id] = (distmax,distmin)
+            id = iTree.documentMap[tuple(initRecords[0])][level]
+            distmin, distmax = iTree.dismatrix[level][id][node.id]
+            minMap[(node.id, level)] = (distmax,distmin)
 
-    lastItem = record2
 
     for k in range(K - 2):
-        candR = DivGetBatch(cluster, S, minMap, lastItem, indexMap)
-        L = []
+        candR = DivGetBatch(iTree,L,arity, S, minMap, indexMap)
+        minArray = []
         maxval = 0
         maxitem = None
         for i in candR:
             min = float("inf")
             for j in S:
-                dist = euclidean_distance_square(i, j)
+                dist = div(i, j)
                 if min >= dist:
                     min = dist
                 if min <= maxval:
@@ -92,64 +118,10 @@ def AugGMM(cluster, X, K, indexMap, record1,record2):
             if min >= maxval:
                 maxval = min
                 maxitem = i
-            L.append(min)
-
-
-        lastItem = maxitem
+            minArray.append(min)
 
         S.append(maxitem)
-        X.remove(maxitem)
-        id = cluster.documentMap[tuple(maxitem)][l]
-        node = cluster.root.children[id - 1]
-        node.elements.remove(maxitem)
-
+        R.remove(maxitem)
     return S
 
 
-
-def DivGetBatch(cluster,S,minMap,lastItem,indexMap):
-
-    lBGMM,uBGMM = CalculateBound(cluster,S,minMap,lastItem,indexMap)
-    candR = SkipNode(cluster,lBGMM,uBGMM)
-    #print(" |candR| by DivGetBatch: ", len(candR))
-    return candR
-
-
-def CalculateBound(cluster,S,minMap,lastItem,indexMap):
-    l = 1
-    lBGMM = []
-    uBGMM = []
-    for node1 in cluster.root.children:
-        e = lastItem
-
-        ##########cluster to cluster distance##########
-        # id = cluster.documentMap[tuple(e)][l]
-        # distmin, distmax = cluster.dismatrix[l][id][node1.id]
-
-        ######### item to cluster distance ############
-        id = indexMap[tuple(e)]
-        distmin, distmax = cluster.dismatrixitem[l][id][node1.id]
-
-        minmax = minMap[node1.id][0]
-        minmin = minMap[node1.id][1]
-        if minmax > distmax:
-            minmax = distmax
-
-        if minmin > distmin:
-            minmin = distmin
-
-        minMap[node1.id] = (minmax, minmin)
-        lBGMM.append(minmin)
-        uBGMM.append(minmax)
-    return  (lBGMM,uBGMM)
-
-
-def SkipNode(cluster,LLmin,LLmax):
-    maxofMin = max(LLmin)
-    candR = []
-    i = 0
-    for it in LLmax:
-        if it >= maxofMin:
-            candR = candR + cluster.root.children[i].elements
-        i = i + 1
-    return candR

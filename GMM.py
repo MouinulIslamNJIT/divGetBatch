@@ -1,23 +1,23 @@
 
 from pyclustering.utils import euclidean_distance_square
+
 import numpy as np
 
-def GMM(U, K,record1,record2):
+def GMM(D, K,initRecords):
     S = []
-    S.append(record1)
-    S.append(record2)
-    U.remove(record1)
-    U.remove(record2)
+    S.extend(list(initRecords))
+    D.remove(initRecords[0])
+    D.remove(initRecords[1])
     minMap = {}
 
-    for i in U:
-        dist = euclidean_distance_square(i, record1)
+    for i in D:
+        dist = euclidean_distance_square(i, initRecords[0])
         minMap[tuple(i)] = dist
-    nextItem = record2
+    nextItem = initRecords[1]
 
     for k in range(K - 2):
         L = []
-        for i in U:
+        for i in D:
             min = minMap[tuple(i)]
             dist = euclidean_distance_square(i, nextItem)
             if min > dist:
@@ -25,7 +25,7 @@ def GMM(U, K,record1,record2):
                 minMap[tuple(i)] = min
             L.append(min)
         index_max = np.argmax(L)
-        nextItem = U[index_max]
-        S.append(U[index_max])
-        U.remove(U[index_max])
+        nextItem = D[index_max]
+        S.append(D[index_max])
+        D.remove(D[index_max])
     return S
