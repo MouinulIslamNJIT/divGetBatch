@@ -11,9 +11,10 @@ from Node import Node
 import pandas as pd
 from sklearn.preprocessing import normalize
 
-from GMM import GMM
-from Utils import checkResult,InitialTwoRecordsInGMM
-from AugGMM import AugGMM
+from AugMMR import AugMMR
+from MMR import MMR
+from Utils import checkResult
+
 
 def run(numberofSample, arity,numberofLevel,Kvalue):
     numberofCluster = arity^numberofLevel
@@ -48,38 +49,39 @@ def run(numberofSample, arity,numberofLevel,Kvalue):
     iTree.buildTree(iTree.root)
     iTree.createLevelMatrix(iTree.root)
     iTree.createDistanceMatrix(arity, numberofLevel)
-    iTree.createDistanceMatrixforelements(arity, numberofLevel)
-    initRecords = InitialTwoRecordsInGMM(iTree)
-    iTree.cleanUp(iTree.root)
-    print(get_object_size(iTree))
+    #iTree.createDistanceMatrixforelements(arity, numberofLevel)
+
+    #iTree.cleanUp(iTree.root)
+    #print(get_object_size(iTree))
+
+    q = [2,5]
+    lambda_score = 0.8
+
 
 
 
     stop = timeit.default_timer()
-
-
     print('Time for indexing: ', stop - start)
 
-    Xgmm = X.tolist()
+    Xmmr = X.tolist()
     start = timeit.default_timer()
 
-    gmmResult = GMM(Xgmm, Kvalue,initRecords)
+    mmrResult = MMR(lambda_score, q, Xmmr, Kvalue)
 
-    print("gmm", gmmResult)
+    print("mmr", mmrResult)
     # GMM(Xgmm, Kvalue)
     stop = timeit.default_timer()
 
     gmm_time = stop - start
-    gmm_final = gmm_time
 
-    print('Time for gmm: ',gmm_final , file=f)
-    print('Time for gmm: ', gmm_final)
+    print('Time for mmr: ',gmm_time , file=f)
+    print('Time for mmr: ', gmm_time)
 
-    Xgmm = X.tolist()
+
     start = timeit.default_timer()
 
-    augGmmResult = AugGMM(iTree,numberofLevel,arity, Xgmm, Kvalue,indexMap,initRecords)
-    print("aug", augGmmResult)
+    augmmrResult = AugMMR(iTree,numberofLevel,arity,q,lambda_score,Kvalue,indexMap)
+    print("aug", augmmrResult)
 
     stop = timeit.default_timer()
 
@@ -87,13 +89,14 @@ def run(numberofSample, arity,numberofLevel,Kvalue):
 
     auggmm_final = auggmm_time
 
-    print('Time for aug-gmm: ',auggmm_final , file=f)
-    print('Time for aug-gmm: ', auggmm_final)
+    print('Time for aug-mmr: ',auggmm_final , file=f)
+    print('Time for aug-mmr: ', auggmm_final)
 
-    checkResult(augGmmResult, gmmResult)
+
+    checkResult(augmmrResult, mmrResult)
 
 def main():
 
-    run(1000,20 , 1 ,20)
+    run(5000,9, 2 ,20)
 
 main()

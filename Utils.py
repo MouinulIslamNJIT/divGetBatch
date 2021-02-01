@@ -60,15 +60,5 @@ def InitialTwoRecordsInGMM(cluster):
 
     return  (record1,record2)
 
-
-"""""
-class Animal:
-    YELP = 1
-    MOVILENS = 2
-
-def getDatase(animal):
-    if animal == Animal.YELP:
-        return yelpdata
-
-getDatase(Animal.YELP)
-"""""
+def similarity(r1,r2):
+    return 1/(1+euclidean_distance_square(r1, r2))
