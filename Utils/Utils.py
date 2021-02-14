@@ -1,5 +1,5 @@
-import guppy
-import inspect
+# import guppy
+# import inspect
 from pyclustering.utils import euclidean_distance_square
 import pandas as pd
 from sklearn.preprocessing import normalize
@@ -7,20 +7,6 @@ from sklearn.datasets.samples_generator import make_blobs
 
 
 infinity = float("inf")
-
-def get_object_size(obj):
-    h = guppy.hpy()
-    callers_local_vars = inspect.currentframe().f_back.f_locals.items()
-
-    vname = "Index size"
-
-    # for var_name, var_val in callers_local_vars:
-    #     if var_val == obj:
-    #         vname = str(var_name)
-
-    size = str("{0:.8f} MB".format(float(h.iso(obj).domisize) / (1024*1024)))
-
-    return str("{}: {}".format(vname, size))
 
 
 def checkResult(augGmmResult, gmmResult):
@@ -119,3 +105,19 @@ def makeBlobs_data(numberofSample):
     print("running makeBlobs")
     X, Y = make_blobs(n_samples=numberofSample, centers=10, cluster_std=0.010, random_state=0)
     return X
+
+
+#
+# def get_object_size(obj):
+#     h = guppy.hpy()
+#     callers_local_vars = inspect.currentframe().f_back.f_locals.items()
+#
+#     vname = "Index size"
+#
+#     # for var_name, var_val in callers_local_vars:
+#     #     if var_val == obj:
+#     #         vname = str(var_name)
+#
+#     size = str("{0:.8f} MB".format(float(h.iso(obj).domisize) / (1024*1024)))
+#
+#     return str("{}: {}".format(vname, size))
