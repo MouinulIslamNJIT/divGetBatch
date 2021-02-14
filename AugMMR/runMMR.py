@@ -11,15 +11,16 @@ def runMMR(sampleSize, arity,numberofLevel,k):
     print('dataset size: ', sampleSize, 'k:', k, 'number of arity: ',
           arity, 'number of level: ', numberofLevel)
 
-    X = yelp_data(sampleSize)
-    #X = makeBlobs_data(sampleSize)
-    # X = movieLens_data(sampleSize)
+    #X = movieLens_data(sampleSize)
+    #X = yelp_data(sampleSize)
+    X = makeBlobs_data(sampleSize)
+
 
 
     xin = X.tolist()
     iTree,indexMap = BuildIndex(xin,arity,numberofLevel,False)
 
-    q = [2,5,8]
+    q = [2,5]
     lambda_score = 0.8
 
     Xmmr = X.tolist()

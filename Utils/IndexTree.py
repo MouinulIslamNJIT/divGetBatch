@@ -51,7 +51,7 @@ class Clustering:
     def buildTree(self,parent):
         #print("element = ",len(parent.elements))
 
-        if len(parent.elements) <= 1:
+        if len(parent.elements) < 1:
             sys.exit("Please decrease total number of clusters.")
 
         if parent.level == self.numberOfLevels:
