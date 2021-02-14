@@ -1,19 +1,20 @@
-from IndexTree import BuildIndex
+from Utils.IndexTree import BuildIndex
 import timeit
-from Utils import yelp_data,makeBlobs_data,movieLens_data
+from Utils.Utils import yelp_data,makeBlobs_data,movieLens_data
 
 
-from GMM import GMM
-from Utils import checkResult,InitialTwoRecordsInGMM
-from AugGMM import AugGMM
+from .GMM import GMM
+from Utils.Utils import checkResult,InitialTwoRecordsInGMM
+from .AugGMM import AugGMM
 
-def run(sampleSize, arity,numberofLevel,k):
+def runGMM(sampleSize, arity,numberofLevel,k):
     print('dataset size: ', sampleSize, 'k:', k, 'number of arity: ',
           arity, 'number of level: ', numberofLevel)
 
-    X = makeBlobs_data(sampleSize)
-    # X = movieLens_data(sampleSize)
-    # X = yelp_data(sampleSize)
+    X = yelp_data(sampleSize)
+    #X = makeBlobs_data(sampleSize)
+    #X = movieLens_data(sampleSize)
+
 
     xin = X.tolist()
     iTree, indexMap = BuildIndex(xin, arity, numberofLevel,False)
@@ -40,8 +41,4 @@ def run(sampleSize, arity,numberofLevel,k):
 
     checkResult(augGmmResult, gmmResult)
 
-def main():
 
-    run(100000,500,1,20)
-
-main()

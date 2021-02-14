@@ -1,24 +1,25 @@
 
-from IndexTree import BuildIndex
+from Utils.IndexTree import BuildIndex
 import timeit
-from Utils import yelp_data,makeBlobs_data,movieLens_data
-from AugMMR import AugMMR
-from MMR import MMR
-from Utils import checkResult
+from Utils.Utils import yelp_data,makeBlobs_data,movieLens_data
+from .AugMMR import AugMMR
+from .MMR import MMR
+from Utils.Utils import checkResult
 
 
-def run(sampleSize, arity,numberofLevel,k):
+def runMMR(sampleSize, arity,numberofLevel,k):
     print('dataset size: ', sampleSize, 'k:', k, 'number of arity: ',
           arity, 'number of level: ', numberofLevel)
 
-    X = makeBlobs_data(sampleSize)
+    X = yelp_data(sampleSize)
+    #X = makeBlobs_data(sampleSize)
     # X = movieLens_data(sampleSize)
-    #X = yelp_data(sampleSize)
+
 
     xin = X.tolist()
     iTree,indexMap = BuildIndex(xin,arity,numberofLevel,False)
 
-    q = [2,5]
+    q = [2,5,8]
     lambda_score = 0.8
 
     Xmmr = X.tolist()
@@ -43,8 +44,4 @@ def run(sampleSize, arity,numberofLevel,k):
 
     checkResult(augmmrResult, mmrResult)
 
-def main():
 
-    run(10000,200,1,20)
-
-main()

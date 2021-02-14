@@ -1,21 +1,22 @@
 
 import timeit
-from Utils import createSimMatrix, topkitems, div
-from SWAP import SWAP
-from  AugSWAP import AugSWAP
-from IndexTree import BuildIndex
-from Utils import checkResult
-from Utils import yelp_data,makeBlobs_data,movieLens_data
+from Utils.Utils import createSimMatrix, topkitems, div
+from .SWAP import SWAP
+from  .AugSWAP import AugSWAP
+from Utils.IndexTree  import BuildIndex
+from Utils.Utils import checkResult
+from Utils.Utils import yelp_data,makeBlobs_data,movieLens_data
 
 
-def run(sampleSize, arity, numberofLevel, k):
+def runSWAP(sampleSize, arity, numberofLevel, k):
 
     print('dataset size: ', sampleSize, 'k:', k, 'number of arity: ',
           arity, 'number of level: ', numberofLevel)
 
-    # X = makeBlobs_data(sampleSize)
-    # X = movieLens_data(sampleSize)
     X = yelp_data(sampleSize)
+    #X = makeBlobs_data(sampleSize)
+    # X = movieLens_data(sampleSize)
+
 
     X = X.tolist()
     query = [1, -1, 1]
@@ -40,4 +41,3 @@ def run(sampleSize, arity, numberofLevel, k):
 
     checkResult(augres, res)
 
-run(50000, 50, 1, 20)

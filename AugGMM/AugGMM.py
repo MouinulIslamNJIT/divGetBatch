@@ -1,4 +1,4 @@
-from Utils import div
+from Utils.Utils import div
 
 def CalculateBound(iTree,level,arity,S,minMap,indexMap,candNodes):
     lastItem = S[-1]

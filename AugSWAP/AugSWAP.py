@@ -1,12 +1,10 @@
 from pyclustering.utils import euclidean_distance_square
 from sklearn.datasets.samples_generator import make_blobs
-from clustering_final import Clustering
+
 import heapq
-from distance import min_distance, max_distance
-import numpy as np
 import timeit
-from  Utils import topkitems,div
-from  Utils import  infinity
+from  Utils.Utils import topkitems,div
+from  Utils.Utils import  infinity
 
 
 

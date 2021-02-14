@@ -1,5 +1,5 @@
 
-from Utils import similarity
+from Utils.Utils import similarity
 def MMR(lambda_score, q, data, k):
 
     docs_unranked = data

@@ -1,5 +1,5 @@
-from Utils import similarity
-from distance_final import min_max_distance
+from Utils.Utils import similarity
+from Utils.distance import min_max_distance
 
 
 def CalculateBound(iTree,level,arity,q,lambda_score,S,simmap,indexMap,candNodes):
