@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
-from Node import Node
-from distance_final2 import min_distance, max_distance,min_max_distance
+from Utils.Node import Node
+from Utils.distance import min_distance, max_distance,min_max_distance
 import timeit
 from sklearn.cluster import MiniBatchKMeans, KMeans
 import numpy
