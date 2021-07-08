@@ -1,3 +1,1 @@
-# divGetBatch
-initial commit
-second commit
+Please install gurobipy to run IP code
