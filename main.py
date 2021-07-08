@@ -9,20 +9,21 @@ from MaintenanceCodes.delete import delete
 
 
 def main():
+    
+
+
+    
+    runGMM(20000,100,1,20)
+    #runMMR(20000, 100, 1, 20)
+    #runSWAP(20000, 100, 1, 20)
+
+
     #maintenance code
     #nonOlMn()
     #nonIncrMn()
     #grMn()
     #delete()
     #OPTMn()
-
-
-
-    runGMM(20000,100,1,20)
-    #runMMR(20000, 100, 1, 20)
-    #runSWAP(20000, 100, 1, 20)
-
-
 
 
 
