@@ -78,7 +78,8 @@ def OPTMn():
         for key in Nodes.keys():
             min = 1000000000000000000000
             for value in Nodes[key]:
-
+                print("item = ",item)
+                print("s = ",S)
                 d = euclideanDist(S[item], value) ** 2
                 if min > d:
                     min = d
@@ -95,6 +96,8 @@ def OPTMn():
         for key in Nodes.keys():
             max = -1
             for value in Nodes[key]:
+                print("item 1= ", item)
+                print("s = 1", S)
                 d = euclideanDist(S[item], value) ** 2
                 if max < d:
                     max = d

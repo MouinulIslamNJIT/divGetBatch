@@ -92,6 +92,7 @@ def yelp_data(numberofSample):
 
     return X
 
+
 def movieLens_data(numberofSample):
     print("running movieLens")
     dataset=pd.read_csv(r'Dataset\ratings\ratings.csv', nrows=numberofSample)
@@ -105,6 +106,19 @@ def makeBlobs_data(numberofSample):
     print("running makeBlobs")
     X, Y = make_blobs(n_samples=numberofSample, centers=10, cluster_std=0.010, random_state=0)
     return X
+
+def maintenanceMovieLens():
+    dataset = pd.read_csv(r'Dataset\MaintenanceDataset\ratings.csv')
+    return dataset
+
+
+def maintenanceMakeBlob():
+    dataset = pd.read_csv(r'Dataset\MaintenanceDataset\makeblobs.csv')
+    return dataset
+
+def getMaintenanceData(path):
+    dataset = pd.read_csv(path)
+    return dataset
 
 
 #

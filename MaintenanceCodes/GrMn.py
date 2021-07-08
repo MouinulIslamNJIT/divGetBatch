@@ -10,10 +10,7 @@ from numpy import asarray
 from numpy import savetxt
 import scipy.spatial.distance
 import random
-
-from Utils.Utils import maintenanceMovieLens
-
-from Utils.Utils import getMaintenanceData
+from Utils.Utils import maintenanceMakeBlob, getMaintenanceData
 
 
 def grMn():
@@ -43,7 +40,8 @@ def grMn():
     # #df = pd.read_csv("randomData1M.csv", header= None)
     # #dataset = pd.read_csv(r'Dataset\business\business.csv', nrows=10)
 
-    df = maintenanceMovieLens()
+    movielensDataPath = r'Dataset\MaintenanceDataset\makeblobs.csv'
+    df = getMaintenanceData(movielensDataPath)
 
     X = df.iloc[:, :].values
 

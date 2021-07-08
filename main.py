@@ -10,16 +10,16 @@ from MaintenanceCodes.delete import delete
 
 def main():
     # maintenance code
-    # delete()
-    OPTMn()
+     delete()
+    #OPTMn()
     #nonOlMn()
     #nonIncrMn()
     #grMn()
 
 
-    runGMM(20000,100,1,20)
-    runMMR(20000, 100, 1, 20)
-    runSWAP(20000, 100, 1, 20)
+    #runGMM(20000,100,1,20)
+    #runMMR(20000, 100, 1, 20)
+    #runSWAP(20000, 100, 1, 20)
 
 
 
